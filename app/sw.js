@@ -1,5 +1,5 @@
 /* ============================================================
-   SERVICE WORKER — Mi Momento
+   SERVICE WORKER — Enmi
    Estrategia: cache-first para el "app shell" (todo vive en un
    único HTML autocontenido, así que cachear ese archivo ya
    cubre toda la app funcionando offline).
@@ -7,7 +7,7 @@
    Cuando cambies algo en index.html, sube el numero de CACHE_VERSION
    para forzar a los usuarios a descargar la version nueva.
 ============================================================ */
-const CACHE_VERSION = 'mimomento-v1';
+const CACHE_VERSION = 'enmi-v3';
 const APP_SHELL = [
   './',
   './index.html',
@@ -38,7 +38,7 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
   // Solo interceptamos peticiones GET del propio origen (no las de
-  // Google Fonts ni otros externos, esas se dejan pasar tal cual)
+  // Google Fonts, Firestore ni otras externas, esas se dejan pasar tal cual)
   if (event.request.method !== 'GET') return;
 
   event.respondWith(
@@ -47,7 +47,6 @@ self.addEventListener('fetch', (event) => {
 
       return fetch(event.request)
         .then((response) => {
-          // Guardamos en cache una copia de lo que sí se pueda cachear
           if (response && response.status === 200 && response.type === 'basic') {
             const clone = response.clone();
             caches.open(CACHE_VERSION).then((cache) => cache.put(event.request, clone));
@@ -55,8 +54,6 @@ self.addEventListener('fetch', (event) => {
           return response;
         })
         .catch(() => {
-          // Sin conexion y sin copia en cache: si pedian una pagina,
-          // devolvemos el shell principal como respaldo
           if (event.request.mode === 'navigate') {
             return caches.match('./index.html');
           }
@@ -64,3 +61,49 @@ self.addEventListener('fetch', (event) => {
     })
   );
 });
+
+/* ============================================================
+   NOTIFICACIONES — clic para abrir/enfocar la app
+============================================================ */
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  event.waitUntil(
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+      for (const client of clientList) {
+        if (client.url.includes(self.registration.scope) && 'focus' in client) {
+          return client.focus();
+        }
+      }
+      if (self.clients.openWindow) {
+        return self.clients.openWindow('./index.html');
+      }
+    })
+  );
+});
+
+/* ============================================================
+   FIREBASE CLOUD MESSAGING — avisos en segundo plano
+   ------------------------------------------------------------
+   Esto se encarga de mostrar la notificación cuando llega desde
+   el servidor (la Cloud Function) y la app no está abierta en
+   ese momento. Usamos el SDK "compat" aquí porque los Service
+   Workers no soportan de forma sencilla el SDK modular con
+   importScripts.
+============================================================ */
+importScripts('https://www.gstatic.com/firebasejs/12.17.1/firebase-app-compat.js');
+importScripts('https://www.gstatic.com/firebasejs/12.17.1/firebase-messaging-compat.js');
+
+firebase.initializeApp({
+  apiKey: "AIzaSyB6ZxQC9aRL9-Q2HaVA9BJLO15Wsdejb6k",
+  authDomain: "enmi-83eeb.firebaseapp.com",
+  projectId: "enmi-83eeb",
+  storageBucket: "enmi-83eeb.firebasestorage.app",
+  messagingSenderId: "11076772193",
+  appId: "1:11076772193:web:a86cc3abf65fdba4672520"
+});
+
+// No hace falta definir onBackgroundMessage a mano: como la Cloud
+// Function manda el aviso con un campo "notification" (no solo
+// "data"), Firebase lo muestra automáticamente usando el icono y
+// el título/cuerpo que le pasamos desde el servidor.
+firebase.messaging();

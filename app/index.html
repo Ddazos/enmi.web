@@ -752,6 +752,13 @@
     flex:1; overflow-y:auto; margin-top:8px;
     display:flex; flex-direction:column; gap:10px;
   }
+  .enmi-ad{
+    display:block;
+    margin-top:20px;
+    min-height:100px;
+    border-radius:14px;
+    overflow:hidden;
+  }
   .fav-item{
     background:var(--card);
     border:1px solid var(--line);
@@ -886,7 +893,7 @@
   <!-- ============ SCREEN 3: MENSAJE ============ -->
   <section id="screen-message" class="screen msg-screen">
     <div class="back-row">
-      <button class="icon-btn" id="back-to-secondary" aria-label="Volver">
+      <button class="icon-btn" id="back-to-secondary" aria-label="Volver al inicio">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </button>
     </div>
@@ -930,6 +937,16 @@
       <span class="wordmark" id="favorites-wordmark">momentos</span>
     </div>
     <div class="fav-list" id="fav-list"></div>
+
+    <!-- ⚠️ Anuncio pendiente: crea el bloque de anuncios "Mis Momentos" en
+         AdSense (una vez aprobado el sitio) y sustituye PENDIENTE_MOMENTOS
+         por el data-ad-slot real que te dé Google -->
+    <ins class="adsbygoogle enmi-ad" id="ad-momentos"
+         style="display:block"
+         data-ad-client="ca-pub-5809524033068146"
+         data-ad-slot="PENDIENTE_MOMENTOS"
+         data-ad-format="auto"
+         data-full-width-responsive="true"></ins>
   </section>
 
   <!-- ============ SCREEN 6: AJUSTES ============ -->
@@ -1138,6 +1155,15 @@
 
       <button class="btn-primary" id="save-semaforo" style="width:100%;">Guardar</button>
       <button class="link-btn" id="open-semaforo-history">Ver mis semáforos anteriores</button>
+
+      <!-- ⚠️ Anuncio pendiente: crea el bloque "Semáforo" en AdSense y
+           sustituye PENDIENTE_SEMAFORO por el data-ad-slot real -->
+      <ins class="adsbygoogle enmi-ad" id="ad-semaforo"
+           style="display:block"
+           data-ad-client="ca-pub-5809524033068146"
+           data-ad-slot="PENDIENTE_SEMAFORO"
+           data-ad-format="auto"
+           data-full-width-responsive="true"></ins>
     </div>
   </section>
 
@@ -1150,6 +1176,15 @@
       <span class="wordmark" id="semaforo-history-wordmark">tus semáforos</span>
     </div>
     <div class="history-list" id="semaforo-history-list"></div>
+
+    <!-- ⚠️ Anuncio pendiente: crea el bloque "Semáforos anteriores" en
+         AdSense y sustituye PENDIENTE_SEMAFORO_HISTORY por el data-ad-slot real -->
+    <ins class="adsbygoogle enmi-ad" id="ad-semaforo-history"
+         style="display:block"
+         data-ad-client="ca-pub-5809524033068146"
+         data-ad-slot="PENDIENTE_SEMAFORO_HISTORY"
+         data-ad-format="auto"
+         data-full-width-responsive="true"></ins>
   </section>
 
 </div>
@@ -1236,10 +1271,10 @@ const UI_STRINGS = {
     ],
     aboutQuote: '«Comprender tus emociones puede cambiar la forma en la que ves el mundo.»',
 
+
     aboutPhilosophyTitle: 'Nuestra filosofía',
     aboutPhilosophyParagraphs: [
       'Creemos que el apoyo emocional debería estar al alcance de cualquier persona.',
-      'Por eso Enmi puede utilizarse de forma gratuita.',
       'Mantener la aplicación, los servidores y seguir creando nuevos contenidos supone muchas horas de trabajo. Para hacerlo posible utilizamos publicidad limitada y ofrecemos la posibilidad de apoyar el proyecto de forma completamente voluntaria.',
       'Nuestro objetivo nunca será vender tranquilidad.',
       'Nuestro objetivo es crear un espacio donde cualquier persona pueda detenerse un momento, escucharse y comprender mejor sus emociones.'
@@ -1349,10 +1384,10 @@ const UI_STRINGS = {
     ],
     aboutQuote: '"Understanding your emotions can change the way you see the world."',
 
+
     aboutPhilosophyTitle: 'Our philosophy',
     aboutPhilosophyParagraphs: [
       'We believe emotional support should be within everyone\'s reach.',
-      'That\'s why Enmi can be used for free.',
       'Keeping the app running, maintaining the servers, and continuing to create new content takes many hours of work. To make that possible, we use limited advertising and offer the option to support the project on a completely voluntary basis.',
       'Our goal will never be to sell peace of mind.',
       'Our goal is to create a space where anyone can pause for a moment, listen to themselves, and better understand their emotions.'
@@ -1629,6 +1664,27 @@ function renderClosingMessage(){
    UTILIDADES
 ============================================================ */
 const $ = sel => document.querySelector(sel);
+
+// Inicializa un bloque de AdSense la primera vez que su pantalla se
+// abre (no antes, porque estando oculta el anuncio no puede medir su
+// tamaño correctamente) y nunca más de una vez por bloque.
+const enmiAdsLoaded = new Set();
+function initEnmiAd(adId){
+  if(enmiAdsLoaded.has(adId)) return;
+  const el = document.getElementById(adId);
+  if(!el || el.dataset.adSlot === 'PENDIENTE_MOMENTOS' || el.dataset.adSlot === 'PENDIENTE_SEMAFORO' || el.dataset.adSlot === 'PENDIENTE_SEMAFORO_HISTORY'){
+    // Todavía no hay un ID de anuncio real (esperando aprobación de
+    // AdSense) — no intentamos cargar nada para no generar errores.
+    return;
+  }
+  try{
+    (window.adsbygoogle = window.adsbygoogle || []).push({});
+    enmiAdsLoaded.add(adId);
+  }catch(err){
+    console.log('No se pudo cargar el anuncio', adId, err);
+  }
+}
+
 const screens = {
   primary: $('#screen-primary'),
   secondary: $('#screen-secondary'),
@@ -1773,7 +1829,7 @@ $('#finish-checkin').addEventListener('click', ()=>{
   showScreen('primary');
 });
 $('#back-to-primary').addEventListener('click', ()=> showScreen('primary'));
-$('#back-to-secondary').addEventListener('click', ()=> showScreen('secondary'));
+$('#back-to-secondary').addEventListener('click', ()=> showScreen('primary'));
 
 /* ============================================================
    FAVORITOS (localStorage)
@@ -1878,6 +1934,7 @@ $('#msg-heart').addEventListener('click', toggleFavorite);
 $('#open-favorites').addEventListener('click', ()=>{
   renderFavorites();
   showScreen('favorites');
+  initEnmiAd('ad-momentos');
 });
 $('#close-favorites').addEventListener('click', ()=> showScreen('primary'));
 $('#open-settings').addEventListener('click', ()=>{
@@ -2157,7 +2214,10 @@ function escapeHtml(str){
   return d.innerHTML;
 }
 
-$('#open-semaforo').addEventListener('click', ()=> showScreen('semaforo'));
+$('#open-semaforo').addEventListener('click', ()=>{
+  showScreen('semaforo');
+  initEnmiAd('ad-semaforo');
+});
 $('#close-semaforo').addEventListener('click', ()=> showScreen('primary'));
 
 $('#save-semaforo').addEventListener('click', ()=>{
@@ -2181,6 +2241,7 @@ $('#save-semaforo').addEventListener('click', ()=>{
 $('#open-semaforo-history').addEventListener('click', ()=>{
   renderSemaforoHistory();
   showScreen('semaforoHistory');
+  initEnmiAd('ad-semaforo-history');
 });
 $('#close-semaforo-history').addEventListener('click', ()=> showScreen('semaforo'));
 

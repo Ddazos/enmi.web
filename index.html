@@ -271,6 +271,30 @@
     color:var(--ink);
   }
 
+  .map-block{
+    max-width:720px;
+    margin:0 auto 48px;
+    text-align:center;
+    background:rgba(255,255,255,0.45);
+    border:1px solid rgba(255,255,255,0.7);
+    border-radius:20px;
+    padding:32px;
+  }
+  .map-block-title{
+    font-family:'Fraunces', serif;
+    font-style:italic;
+    font-weight:500;
+    font-size:22px;
+    color:var(--ink);
+    margin:0 0 12px;
+  }
+  .map-block-body{
+    font-size:16px;
+    line-height:1.7;
+    color:var(--ink-soft);
+    margin:0;
+  }
+
   .feature-grid{
     display:grid;
     grid-template-columns:repeat(5, 1fr);
@@ -490,6 +514,9 @@
     .nav-right{ gap:8px; }
     .nav-cta{ padding:9px 15px; font-size:13px; }
     .lang-btn-mini{ padding:5px 9px; font-size:11.5px; }
+    .map-block{ padding:22px 20px; margin-bottom:36px; }
+    .map-block-title{ font-size:19px; }
+    .map-block-body{ font-size:14.5px; }
   }
 
   @media (prefers-reduced-motion: reduce){
@@ -543,6 +570,12 @@
       <p class="section-eyebrow" id="features-eyebrow">Qué encontrarás dentro</p>
       <h2 class="section-title" id="features-title">Un mapa, no un diagnóstico</h2>
     </div>
+
+    <div class="map-block">
+      <p class="map-block-title" id="map-title">Un mapa para entender lo que sientes</p>
+      <p class="map-block-body" id="map-body">A veces sabemos que algo nos pasa, pero no sabemos exactamente qué. El mapa de emociones de Enmi te ayuda a poner nombre a lo que estás sintiendo y a descubrir qué puede haber detrás de esa emoción.</p>
+    </div>
+
     <div class="feature-grid">
       <div class="feature-card">
         <span class="feature-icon">🌿</span>
@@ -638,6 +671,8 @@ const UI_STRINGS = {
     originBody: 'Enmi nació de una necesidad. Hubo un momento en el que necesité entender qué me pasaba por dentro — no por curiosidad, sino porque de verdad lo necesitaba. Con el tiempo descubrí que ponerle nombre a las emociones cambiaba la forma de vivirlas.',
     featuresEyebrow: 'Qué encontrarás dentro',
     featuresTitle: 'Un mapa, no un diagnóstico',
+    mapTitle: 'Un mapa para entender lo que sientes',
+    mapBody: 'A veces sabemos que algo nos pasa, pero no sabemos exactamente qué. El mapa de emociones de Enmi te ayuda a poner nombre a lo que estás sintiendo y a descubrir qué puede haber detrás de esa emoción.',
     feat1Title: 'Identifica',
     feat1Body: '49 emociones distintas, no solo "bien" o "mal". Matices que de verdad se parecen a lo que sientes.',
     feat2Title: 'Comprende',
@@ -677,6 +712,8 @@ const UI_STRINGS = {
     originBody: 'Enmi was born from a need. There was a moment when I needed to understand what was happening inside me — not out of curiosity, but because I truly needed it. Over time I discovered that naming emotions changed the way I experienced them.',
     featuresEyebrow: 'What you\'ll find inside',
     featuresTitle: 'A map, not a diagnosis',
+    mapTitle: 'A map to understand what you feel',
+    mapBody: 'Sometimes we know something\'s going on, but not exactly what. Enmi\'s emotion map helps you put a name to what you\'re feeling, and discover what might be behind that emotion.',
     feat1Title: 'Identify',
     feat1Body: '49 distinct emotions, not just "good" or "bad." Nuances that actually feel like what you\'re going through.',
     feat2Title: 'Understand',
@@ -714,7 +751,7 @@ function t(key){ return UI_STRINGS[currentLang][key]; }
 const idMap = {
   navCta: 'nav-cta', heroEyebrow: 'hero-eyebrow', heroH1: 'hero-h1', heroSub: 'hero-sub',
   heroCta: 'hero-cta', heroNote: 'hero-note', originBody: 'origin-body',
-  featuresEyebrow: 'features-eyebrow', featuresTitle: 'features-title',
+  featuresEyebrow: 'features-eyebrow', featuresTitle: 'features-title', mapTitle: 'map-title', mapBody: 'map-body',
   feat1Title: 'feat1-title', feat1Body: 'feat1-body',
   feat2Title: 'feat2-title', feat2Body: 'feat2-body',
   feat3Title: 'feat3-title', feat3Body: 'feat3-body',

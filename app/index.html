@@ -259,6 +259,10 @@
     to{ opacity:1; transform:translateY(0); }
   }
 
+  .msg-note-block{ margin-top:14px; }
+  .msg-note-block .link-btn{ padding:8px 0 4px; text-align:left; }
+  .msg-note-textarea{ margin-top:4px; }
+
   .msg-actions{
     display:flex; gap:10px; margin-top:20px;
   }
@@ -611,6 +615,42 @@
     line-height:1.35;
   }
 
+  /* ---------- TÉCNICAS DE RESPIRACIÓN ---------- */
+  .breathing-scroll{ flex:1; overflow-y:auto; margin-top:10px; padding-bottom:20px; }
+  .breath-card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-left:4px solid var(--line);
+    border-radius:16px;
+    padding:16px 18px;
+    margin-bottom:14px;
+  }
+  .breath-calm{ border-left-color:#5C7A4E; }
+  .breath-focus{ border-left-color:#C1614A; }
+  .breath-connect{ border-left-color:#8A9A6E; }
+  .breath-release{ border-left-color:#7C93A3; }
+  .breath-card-title{
+    font-family:'Karla', sans-serif;
+    font-weight:700;
+    font-size:15px;
+    color:var(--ink);
+    margin:0 0 10px;
+    display:flex; align-items:center; gap:8px;
+  }
+  .breath-emoji{ font-size:18px; }
+  .breath-steps{
+    font-size:14px;
+    line-height:1.55;
+    color:var(--ink);
+    margin:0 0 10px;
+  }
+  .breath-tip{
+    font-size:13px;
+    line-height:1.5;
+    color:var(--ink-soft);
+    margin:0;
+  }
+
   .back-row{
     display:flex; align-items:center; gap:10px; margin-bottom:2px;
   }
@@ -630,15 +670,20 @@
     box-shadow: 0 6px 16px rgba(59,52,42,0.10);
     z-index:2;
   }
-  .semaforo-fab{
+  .tools-group{
     position:absolute;
     left:20px;
     bottom: max(20px, env(safe-area-inset-bottom));
-    background:var(--card);
-    box-shadow: 0 6px 16px rgba(59,52,42,0.10);
+    display:flex;
+    gap:10px;
     z-index:2;
   }
-  .semaforo-emoji{ font-size:19px; line-height:1; }
+  .tool-fab{
+    position:static;
+    background:var(--card);
+    box-shadow: 0 6px 16px rgba(59,52,42,0.10);
+  }
+  .tool-emoji{ font-size:17px; line-height:1; }
 
   .semaforo-scroll{
     flex:1; overflow-y:auto; margin-top:10px; padding-bottom:6px;
@@ -787,6 +832,16 @@
     line-height:1.45;
     color:var(--ink);
   }
+  .fav-item-note{
+    margin-top:10px;
+    padding-top:10px;
+    border-top:1px dashed var(--line);
+    font-family:'Karla', sans-serif;
+    font-size:13.5px;
+    line-height:1.5;
+    color:var(--ink-soft);
+    white-space:pre-wrap;
+  }
 </style>
 <script type="module">
   import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js';
@@ -862,9 +917,14 @@
       <div class="wheel-center" id="wheel-center-text">¿cómo estás<br>ahora mismo?</div>
     </div>
 
-    <button class="icon-btn semaforo-fab" id="open-semaforo" aria-label="Ejercicio del semáforo">
-      <span class="semaforo-emoji">🚦</span>
-    </button>
+    <div class="tools-group">
+      <button class="icon-btn tool-fab" id="open-semaforo" aria-label="Ejercicio del semáforo">
+        <span class="tool-emoji">🚦</span>
+      </button>
+      <button class="icon-btn tool-fab" id="open-breathing" aria-label="Técnicas de respiración">
+        <span class="tool-emoji">🌬️</span>
+      </button>
+    </div>
 
     <button class="icon-btn settings-fab" id="open-settings" aria-label="Ajustes">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.6"/><path d="M12 3v2.4M12 18.6V21M4.2 4.2l1.7 1.7M18.1 18.1l1.7 1.7M3 12h2.4M18.6 12H21M4.2 19.8l1.7-1.7M18.1 5.9l1.7-1.7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
@@ -910,6 +970,11 @@
 
     <div class="msg-card">
       <p class="msg-text" id="msg-text">Mensaje...</p>
+    </div>
+
+    <div class="msg-note-block">
+      <button class="link-btn" id="msg-note-toggle">+ Añadir una nota</button>
+      <textarea class="semaforo-textarea msg-note-textarea" id="msg-note-textarea" rows="3" placeholder="Escribe aquí..." style="display:none;"></textarea>
     </div>
 
     <div class="msg-actions">
@@ -1187,6 +1252,43 @@
          data-full-width-responsive="true"></ins>
   </section>
 
+  <!-- ============ SCREEN 13: TÉCNICAS DE RESPIRACIÓN ============ -->
+  <section id="screen-breathing" class="screen">
+    <div class="back-row">
+      <button class="icon-btn" id="close-breathing" aria-label="Volver">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <span class="wordmark" id="breathing-wordmark">técnicas de respiración</span>
+    </div>
+    <div class="breathing-scroll">
+      <p class="prompt-sub" id="breathing-intro">Cuatro formas sencillas de volver al presente, cuando lo necesites.</p>
+
+      <div class="breath-card breath-calm">
+        <p class="breath-card-title"><span class="breath-emoji">🌿</span> <span id="breath1-title">Calmar — Respiración 4–6</span></p>
+        <p class="breath-steps" id="breath1-steps">Inhala 4 segundos → exhala 6 segundos.<br>Repite durante 1–3 minutos.</p>
+        <p class="breath-tip" id="breath1-tip">👉 Alargar suavemente la exhalación puede ayudar a bajar el ritmo y favorecer una sensación de calma.</p>
+      </div>
+
+      <div class="breath-card breath-focus">
+        <p class="breath-card-title"><span class="breath-emoji">🎯</span> <span id="breath2-title">Concentrar — Respiración cuadrada</span></p>
+        <p class="breath-steps" id="breath2-steps">Inhala 4 → mantén 4 → exhala 4 → mantén 4.<br>Repite durante unos minutos.</p>
+        <p class="breath-tip" id="breath2-tip">👉 Es una técnica sencilla para centrar la atención cuando tienes la mente acelerada.</p>
+      </div>
+
+      <div class="breath-card breath-connect">
+        <p class="breath-card-title"><span class="breath-emoji">🌱</span> <span id="breath3-title">Conectar — Respiración diafragmática</span></p>
+        <p class="breath-steps" id="breath3-steps">Coloca una mano sobre el pecho y otra sobre el abdomen. Inhala lentamente por la nariz, intentando que se mueva principalmente el abdomen. Exhala despacio y deja que el abdomen vuelva a su posición.<br>Hazlo durante 2–5 minutos.</p>
+        <p class="breath-tip" id="breath3-tip">👉 Ayuda a tomar conciencia de la respiración y a reducir la respiración superficial.</p>
+      </div>
+
+      <div class="breath-card breath-release">
+        <p class="breath-card-title"><span class="breath-emoji">🌊</span> <span id="breath4-title">Soltar — Respiración 4–4–6</span></p>
+        <p class="breath-steps" id="breath4-steps">Inhala 4 segundos → mantén 4 → exhala 6.<br>Repite varias veces, sin forzar.</p>
+        <p class="breath-tip" id="breath4-tip">👉 Combina una respiración pausada con una exhalación algo más larga.</p>
+      </div>
+    </div>
+  </section>
+
 </div>
 
 <script>
@@ -1220,6 +1322,22 @@ const UI_STRINGS = {
     settingsLabel: 'Ajustes',
     historyLabel: 'Ver historial',
     favoritesEmpty: 'Todavía no has guardado ningún Momento.<br>Toca el corazón cuando algo te llegue.',
+    msgNoteToggle: '+ Añadir una nota',
+
+    breathingTitle: 'técnicas de respiración',
+    breathingIntro: 'Cuatro formas sencillas de volver al presente, cuando lo necesites.',
+    breath1Title: 'Calmar — Respiración 4–6',
+    breath1Steps: 'Inhala 4 segundos → exhala 6 segundos.<br>Repite durante 1–3 minutos.',
+    breath1Tip: '👉 Alargar suavemente la exhalación puede ayudar a bajar el ritmo y favorecer una sensación de calma.',
+    breath2Title: 'Concentrar — Respiración cuadrada',
+    breath2Steps: 'Inhala 4 → mantén 4 → exhala 4 → mantén 4.<br>Repite durante unos minutos.',
+    breath2Tip: '👉 Es una técnica sencilla para centrar la atención cuando tienes la mente acelerada.',
+    breath3Title: 'Conectar — Respiración diafragmática',
+    breath3Steps: 'Coloca una mano sobre el pecho y otra sobre el abdomen. Inhala lentamente por la nariz, intentando que se mueva principalmente el abdomen. Exhala despacio y deja que el abdomen vuelva a su posición.<br>Hazlo durante 2–5 minutos.',
+    breath3Tip: '👉 Ayuda a tomar conciencia de la respiración y a reducir la respiración superficial.',
+    breath4Title: 'Soltar — Respiración 4–4–6',
+    breath4Steps: 'Inhala 4 segundos → mantén 4 → exhala 6.<br>Repite varias veces, sin forzar.',
+    breath4Tip: '👉 Combina una respiración pausada con una exhalación algo más larga.',
     historyTitle: 'tu recorrido',
     historyEmpty: 'Todavía no hay check-ins guardados.<br>Vuelve cuando quieras contarme cómo estás.',
     settingsTitle: 'ajustes',
@@ -1333,6 +1451,22 @@ const UI_STRINGS = {
     settingsLabel: 'Settings',
     historyLabel: 'View history',
     favoritesEmpty: 'You haven\'t saved any Moments yet.<br>Tap the heart when something speaks to you.',
+    msgNoteToggle: '+ Add a note',
+
+    breathingTitle: 'breathing techniques',
+    breathingIntro: 'Four simple ways to come back to the present, whenever you need to.',
+    breath1Title: 'Calm — 4–6 breathing',
+    breath1Steps: 'Inhale 4 seconds → exhale 6 seconds.<br>Repeat for 1–3 minutes.',
+    breath1Tip: '👉 Gently lengthening the exhale can help slow you down and bring on a sense of calm.',
+    breath2Title: 'Focus — Box breathing',
+    breath2Steps: 'Inhale 4 → hold 4 → exhale 4 → hold 4.<br>Repeat for a few minutes.',
+    breath2Tip: '👉 A simple technique to center your attention when your mind feels rushed.',
+    breath3Title: 'Connect — Diaphragmatic breathing',
+    breath3Steps: 'Place one hand on your chest and the other on your belly. Inhale slowly through your nose, letting your belly rise more than your chest. Exhale slowly and let your belly settle back down.<br>Do this for 2–5 minutes.',
+    breath3Tip: '👉 Helps you become aware of your breathing and reduce shallow breathing.',
+    breath4Title: 'Release — 4–4–6 breathing',
+    breath4Steps: 'Inhale 4 seconds → hold 4 → exhale 6.<br>Repeat a few times, without forcing it.',
+    breath4Tip: '👉 Combines slow breathing with a slightly longer exhale.',
     historyTitle: 'your journey',
     historyEmpty: 'No check-ins saved yet.<br>Come back whenever you want to tell me how you\'re doing.',
     settingsTitle: 'settings',
@@ -1697,7 +1831,8 @@ const screens = {
   notifications: $('#screen-notifications'),
   privacy: $('#screen-privacy'),
   about: $('#screen-about'),
-  support: $('#screen-support')
+  support: $('#screen-support'),
+  breathing: $('#screen-breathing')
 };
 function showScreen(name){
   Object.values(screens).forEach(s=>s.classList.remove('active'));
@@ -1809,8 +1944,20 @@ function openMessage(secondaryKey){
   renderMessage();
   renderClosingMessage();
   saveHistory();
+  resetMsgNote();
   showScreen('message');
 }
+
+function resetMsgNote(){
+  $('#msg-note-textarea').value = '';
+  $('#msg-note-textarea').style.display = 'none';
+  $('#msg-note-toggle').style.display = 'block';
+}
+$('#msg-note-toggle').addEventListener('click', ()=>{
+  $('#msg-note-textarea').style.display = 'block';
+  $('#msg-note-toggle').style.display = 'none';
+  $('#msg-note-textarea').focus();
+});
 
 function renderMessage(){
   const e = EMOTIONS[currentPrimaryKey];
@@ -1869,9 +2016,11 @@ function toggleFavorite(){
   const idx = findFavoriteIndex(list, currentSecondaryKey, text);
 
   if(idx === -1){
+    const note = $('#msg-note-textarea').value.trim();
     list.unshift({
       secondaryKey: currentSecondaryKey,
       text,
+      note: note || null,
       primaryKey: currentPrimaryKey, primaryEmoji: e.emoji, color: e.colorHex,
       secondaryEmoji: sec.emoji,
       ts: Date.now()
@@ -1921,7 +2070,8 @@ function renderFavorites(){
           <svg width="17" height="17" viewBox="0 0 24 24"><path d="M12 20.3s-7-4.3-9.4-8.7C.9 8.3 2.3 5 5.6 5c1.9 0 3.4 1.1 4.4 2.6C11 6.1 12.5 5 14.4 5c3.3 0 4.7 3.3 3 6.6C19 16 12 20.3 12 20.3z"/></svg>
         </span>
       </div>
-      <p class="fav-item-text">${f.text}</p>`;
+      <p class="fav-item-text">${f.text}</p>
+      ${f.note ? `<p class="fav-item-note">${escapeHtml(f.note)}</p>` : ''}`;
     wrap.appendChild(div);
   });
   wrap.querySelectorAll('.fav-item-remove').forEach(el => {
@@ -2220,6 +2370,9 @@ $('#open-semaforo').addEventListener('click', ()=>{
 });
 $('#close-semaforo').addEventListener('click', ()=> showScreen('primary'));
 
+$('#open-breathing').addEventListener('click', ()=> showScreen('breathing'));
+$('#close-breathing').addEventListener('click', ()=> showScreen('primary'));
+
 $('#save-semaforo').addEventListener('click', ()=>{
   const dificil = $('#semaforo-dificil').value.trim();
   const bueno = $('#semaforo-bueno').value.trim();
@@ -2399,6 +2552,25 @@ function applyLanguage(){
   $('#open-settings').setAttribute('aria-label', t('settingsLabel'));
   $('#open-semaforo').setAttribute('aria-label', t('semaforoBtnLabel'));
   $('#msg-heart').setAttribute('aria-label', currentLang === 'en' ? 'Save to Moments' : 'Guardar en Momentos');
+  $('#msg-note-toggle').textContent = t('msgNoteToggle');
+  $('#msg-note-textarea').placeholder = t('semaforoPlaceholder');
+
+  $('#breathing-wordmark').textContent = t('breathingTitle');
+  $('#breathing-intro').textContent = t('breathingIntro');
+  $('#breath1-title').textContent = t('breath1Title');
+  $('#breath1-steps').innerHTML = t('breath1Steps');
+  $('#breath1-tip').textContent = t('breath1Tip');
+  $('#breath2-title').textContent = t('breath2Title');
+  $('#breath2-steps').innerHTML = t('breath2Steps');
+  $('#breath2-tip').textContent = t('breath2Tip');
+  $('#breath3-title').textContent = t('breath3Title');
+  $('#breath3-steps').innerHTML = t('breath3Steps');
+  $('#breath3-tip').textContent = t('breath3Tip');
+  $('#breath4-title').textContent = t('breath4Title');
+  $('#breath4-steps').innerHTML = t('breath4Steps');
+  $('#breath4-tip').textContent = t('breath4Tip');
+  $('#open-breathing').setAttribute('aria-label', currentLang === 'en' ? 'Breathing techniques' : 'Técnicas de respiración');
+
   document.querySelectorAll('.back-row .icon-btn').forEach(btn => {
     btn.setAttribute('aria-label', t('back'));
   });

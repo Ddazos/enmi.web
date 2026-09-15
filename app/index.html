@@ -1944,20 +1944,30 @@ function openMessage(secondaryKey){
   renderMessage();
   renderClosingMessage();
   saveHistory();
-  resetMsgNote();
+  loadMsgNote();
   showScreen('message');
 }
 
-function resetMsgNote(){
-  $('#msg-note-textarea').value = '';
-  $('#msg-note-textarea').style.display = 'none';
-  $('#msg-note-toggle').style.display = 'block';
+function loadMsgNote(){
+  // Si este mensaje exacto ya está guardado en Momentos, recupera su nota.
+  const list = getFavorites();
+  const idx = findFavoriteIndex(list, currentSecondaryKey, currentMsgText);
+  const existingNote = (idx !== -1 && list[idx].note) ? list[idx].note : '';
+  $('#msg-note-textarea').value = existingNote;
+  if(existingNote){
+    $('#msg-note-textarea').style.display = 'block';
+    $('#msg-note-toggle').style.display = 'none';
+  } else {
+    $('#msg-note-textarea').style.display = 'none';
+    $('#msg-note-toggle').style.display = 'block';
+  }
 }
 $('#msg-note-toggle').addEventListener('click', ()=>{
   $('#msg-note-textarea').style.display = 'block';
   $('#msg-note-toggle').style.display = 'none';
   $('#msg-note-textarea').focus();
 });
+$('#msg-note-textarea').addEventListener('input', saveMsgNote);
 
 function renderMessage(){
   const e = EMOTIONS[currentPrimaryKey];
@@ -2005,6 +2015,34 @@ function updateHeartIcon(){
     btn.classList.add('is-fav');
   } else {
     btn.classList.remove('is-fav');
+  }
+}
+
+function saveMsgNote(){
+  // Guarda la nota mientras el usuario escribe. Si el mensaje aún no está
+  // en Momentos, lo crea (igual que si hubiera tocado el corazón), para que
+  // escribir una nota nunca se pierda aunque no se toque el corazón antes.
+  const e = EMOTIONS[currentPrimaryKey];
+  const sec = e.secondary.find(s => s.key === currentSecondaryKey);
+  const text = $('#msg-text').textContent;
+  const note = $('#msg-note-textarea').value.trim();
+  const list = getFavorites();
+  const idx = findFavoriteIndex(list, currentSecondaryKey, text);
+
+  if(idx !== -1){
+    list[idx].note = note || null;
+    setFavorites(list);
+  } else if(note){
+    list.unshift({
+      secondaryKey: currentSecondaryKey,
+      text,
+      note,
+      primaryKey: currentPrimaryKey, primaryEmoji: e.emoji, color: e.colorHex,
+      secondaryEmoji: sec.emoji,
+      ts: Date.now()
+    });
+    setFavorites(list);
+    updateHeartIcon();
   }
 }
 
@@ -2617,8 +2655,27 @@ init();
 ============================================================ */
 if('serviceWorker' in navigator){
   window.addEventListener('load', ()=>{
-    navigator.serviceWorker.register('./sw.js').catch(err=>{
+    navigator.serviceWorker.register('./sw.js').then((reg)=>{
+      // Además de la comprobación automática del navegador (que puede
+      // tardar en llegar si la app se queda "en segundo plano" en el
+      // móvil/tablet sin cerrarse nunca del todo), pedimos explícitamente
+      // que compruebe si hay versión nueva cada vez que la app vuelve a
+      // primer plano — así no hace falta forzar nada a mano.
+      document.addEventListener('visibilitychange', ()=>{
+        if(document.visibilityState === 'visible') reg.update().catch(()=>{});
+      });
+    }).catch(err=>{
       console.log('No se pudo registrar el service worker:', err);
+    });
+
+    // En cuanto un service worker nuevo toma el control de la página,
+    // recargamos automáticamente para que siempre se vea la versión más
+    // reciente en vez de quedarse en una copia vieja hasta recargar a mano.
+    let swRefreshing = false;
+    navigator.serviceWorker.addEventListener('controllerchange', ()=>{
+      if(swRefreshing) return;
+      swRefreshing = true;
+      window.location.reload();
     });
   });
 }

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Enmi · Subir biblioteca de emociones</title>
+<style>
+  body{ font-family:-apple-system,'Karla',sans-serif; background:#FAF5EC; color:#4A4038; max-width:640px; margin:0 auto; padding:24px 18px 60px; line-height:1.5; }
+  h1{ font-family:'Fraunces', serif; font-size:22px; margin:4px 0 2px; }
+  h2{ font-family:'Fraunces', serif; font-size:16px; margin:28px 0 6px; }
+  .warn{ background:#FBEFE1; border:1px solid #E4C89A; border-radius:10px; padding:12px 14px; font-size:14px; margin:14px 0; }
+  .warn strong{ display:block; margin-bottom:4px; }
+  .step{ background:#fff; border:1px solid #E8DFCE; border-radius:12px; padding:16px; margin:14px 0; }
+  code{ background:#F1E8D6; padding:1px 5px; border-radius:4px; font-size:13px; }
+  input[type=file]{ display:block; margin:8px 0; }
+  button{ font-family:inherit; font-size:15px; font-weight:600; padding:10px 18px; border-radius:100px; border:none; cursor:pointer; }
+  #upload-btn{ background:#4A4038; color:#FAF5EC; }
+  #upload-btn:disabled{ background:#C9BFAF; opacity:.4; cursor:not-allowed; }
+  #status{ margin-top:16px; font-size:14px; white-space:pre-wrap; }
+  .ok{ color:#4C7A4E; } .err{ color:#B24A3E; font-weight:600; }
+  ul{ font-size:13px; padding-left:20px; columns:2; }
+  label.confirm{ display:flex; gap:8px; align-items:flex-start; font-size:14px; margin:12px 0; cursor:pointer; }
+  .hidden{ display:none; }
+</style>
+</head>
+<body>
+
+<h1>🚪 Subir biblioteca de emociones a Firestore</h1>
+<p>Herramienta de un solo uso: lee tu <code>enciclopedia_merged.json</code> y sobrescribe los 49 documentos de <code>emociones_secundarias</code>. No hace falta terminal, todo pasa en este navegador.</p>
+
+<div class="warn">
+  <strong>⚠️ Antes de nada — paso obligatorio en Firebase Console</strong>
+  Ahora mismo la colección es de solo lectura. Ve a Firebase Console → tu proyecto <code>enmi-83eeb</code> → Firestore Database → pestaña <strong>Reglas</strong>, y añade temporalmente dentro del bloque de <code>emociones_secundarias</code> una línea <code>allow write: if true;</code>. Guarda. Sube la biblioteca con esta página. En cuanto termine (paso 4), <strong>vuelve y quita esa línea</strong> para que la colección vuelva a ser de solo lectura.
+</div>
+
+<div class="step">
+  <h2>1. Elige el archivo</h2>
+  <input type="file" id="file-input" accept="application/json">
+  <div id="parse-status"></div>
+</div>
+
+<div class="step hidden" id="preview-block">
+  <h2>2. Comprueba que es lo que esperas</h2>
+  <div id="preview"></div>
+</div>
+
+<div class="step hidden" id="upload-block">
+  <h2>3. Confirma y sube</h2>
+  <label class="confirm">
+    <input type="checkbox" id="confirm-rules">
+    Ya he añadido <code>allow write: if true;</code> en las reglas de <code>emociones_secundarias</code> y he guardado.
+  </label>
+  <button id="upload-btn" disabled>Subir 49 documentos a Firestore</button>
+  <div id="status"></div>
+</div>
+
+<div class="warn hidden" id="done-reminder">
+  <strong>4. Último paso — no te lo saltes</strong>
+  Vuelve a Firebase Console → Firestore → Reglas, quita la línea <code>allow write: if true;</code> que añadiste, y guarda. Así la colección vuelve a ser de solo lectura para cualquiera que no sea tú.
+</div>
+
+<script type="module">
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js';
+  import { getFirestore, doc, writeBatch } from 'https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js';
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyB6ZxQC9aRL9-Q2HaVA9BJLO15Wsdejb6k",
+    authDomain: "enmi-83eeb.firebaseapp.com",
+    projectId: "enmi-83eeb",
+    storageBucket: "enmi-83eeb.firebasestorage.app",
+    messagingSenderId: "11076772193",
+    appId: "1:11076772193:web:a86cc3abf65fdba4672520"
+  };
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  const $ = (sel) => document.querySelector(sel);
+  let parsedData = null;
+
+  function validateEntry(id, entry){
+    const problems = [];
+    if(!entry.nombre || !entry.nombre.es || !entry.nombre.en) problems.push('falta nombre es/en');
+    ['explicaciones','validaciones','consejos'].forEach(list => {
+      const l = entry[list];
+      if(!l || !Array.isArray(l.es) || !Array.isArray(l.en)) { problems.push(`falta ${list}.es/en`); return; }
+      if(l.es.length !== l.en.length) problems.push(`${list}: ${l.es.length} es vs ${l.en.length} en`);
+      if(l.es.length < 1) problems.push(`${list} vacío`);
+    });
+    return problems;
+  }
+
+  $('#file-input').addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if(!file) return;
+    $('#parse-status').innerHTML = 'Leyendo…';
+    const reader = new FileReader();
+    reader.onload = () => {
+      let data;
+      try{ data = JSON.parse(reader.result); }
+      catch(err){
+        $('#parse-status').innerHTML = `<span class="err">✕ El archivo no es JSON válido: ${err.message}</span>`;
+        return;
+      }
+      const ids = Object.keys(data);
+      let allProblems = [];
+      let totalEs = 0, totalEn = 0;
+      ids.forEach(id => {
+        const p = validateEntry(id, data[id]);
+        if(p.length) allProblems.push(`${id}: ${p.join(', ')}`);
+        ['explicaciones','validaciones','consejos'].forEach(list => {
+          if(data[id][list]){
+            totalEs += (data[id][list].es||[]).length;
+            totalEn += (data[id][list].en||[]).length;
+          }
+        });
+      });
+
+      parsedData = allProblems.length === 0 ? data : null;
+
+      $('#parse-status').innerHTML = ids.length === 49
+        ? `<span class="ok">✓ ${ids.length} emociones encontradas</span>`
+        : `<span class="err">⚠ ${ids.length} emociones encontradas (se esperaban 49 — revisa el archivo)</span>`;
+
+      $('#preview-block').classList.remove('hidden');
+      $('#preview').innerHTML = `
+        <p>Frases totales: <strong>${totalEs}</strong> ES / <strong>${totalEn}</strong> EN, sumando explicaciones + validaciones + consejos de las ${ids.length} emociones.</p>
+        ${allProblems.length ? `<p class="err">Problemas encontrados en ${allProblems.length} entradas (no se subirá nada hasta corregirlos):</p><ul>${allProblems.map(p=>`<li>${p}</li>`).join('')}</ul>`
+          : `<p class="ok">✓ Las 49 entradas tienen nombre y las 3 listas en es/en, sin vacíos.</p><ul>${ids.map(id=>`<li>${id}</li>`).join('')}</ul>`}
+      `;
+
+      $('#upload-block').classList.toggle('hidden', !parsedData);
+      $('#confirm-rules').checked = false;
+      updateButtonState();
+    };
+    reader.readAsText(file);
+  });
+
+  function updateButtonState(){
+    $('#upload-btn').disabled = !(parsedData && $('#confirm-rules').checked);
+  }
+  $('#confirm-rules').addEventListener('change', updateButtonState);
+
+  $('#upload-btn').addEventListener('click', async () => {
+    if(!parsedData) return;
+    const ids = Object.keys(parsedData);
+    if(!confirm(`Esto sobrescribirá ${ids.length} documentos en emociones_secundarias con lo que hay en el archivo. ¿Seguro?`)) return;
+
+    $('#upload-btn').disabled = true;
+    $('#status').textContent = 'Subiendo…';
+    try{
+      const batch = writeBatch(db);
+      ids.forEach(id => batch.set(doc(db, 'emociones_secundarias', id), parsedData[id]));
+      await batch.commit();
+      $('#status').innerHTML = `<span class="ok">✓ Subido: ${ids.length} documentos actualizados en emociones_secundarias.</span>`;
+      $('#done-reminder').classList.remove('hidden');
+    }catch(err){
+      $('#status').innerHTML = `<span class="err">✕ Falló la subida: ${err.message}</span>` +
+        (err.code === 'permission-denied' ? '<br>Esto normalmente significa que el paso 1 (reglas de Firestore) no se guardó, o que la línea no quedó dentro del bloque de emociones_secundarias. Revísalo y vuelve a intentarlo.' : '');
+      $('#upload-btn').disabled = false;
+    }
+  });
+</script>
+</body>
+</html>

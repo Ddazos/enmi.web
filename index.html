@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Enmi — Un espacio para entender lo que sientes</title>
-<meta name="description" content="Enmi es un espacio cálido para pararte un momento, escuchar tus emociones y entender lo que estás viviendo. Gratis, en español, sin registro.">
+<title>Enmi — No olvidemos sentir</title>
+<meta name="description" content="En un mundo que piensa cada vez más como una máquina, Enmi es un espacio cercano para parar y escuchar lo que sientes. Gratis, en español, sin registro.">
 <meta name="theme-color" content="#F0A875">
 
 <!-- PWA: permite "Añadir a pantalla de inicio" desde la propia landing,
@@ -249,6 +249,16 @@
     color:var(--ink-soft);
     max-width:600px;
     margin:0 auto;
+  }
+  .origin-body + .origin-body{ margin-top:20px; }
+  .origin-lines{ white-space:pre-line; }
+  .origin-close{
+    font-family:'Fraunces', serif;
+    font-style:italic;
+    font-size:19px;
+    line-height:1.5;
+    color:var(--ink);
+    margin-top:28px;
   }
   .origin-mark{
     width:34px; height:2px;
@@ -556,9 +566,9 @@
   <section class="hero">
     <div class="hero-blob"></div>
     <div class="hero-text">
-      <p class="hero-eyebrow" id="hero-eyebrow">Bienestar emocional · en español</p>
-      <h1 id="hero-h1">Comprender tus emociones puede cambiar la forma en la que ves el mundo.</h1>
-      <p class="hero-sub" id="hero-sub">Enmi es un espacio cálido para pararte un momento, escucharte y entender lo que sientes. Sin cuentas, sin complicaciones — solo tú y un mapa para conocerte mejor.</p>
+      <p class="hero-eyebrow" id="hero-eyebrow">Un espacio para escucharte</p>
+      <h1 id="hero-h1">En un mundo que piensa cada vez más como una máquina, no olvidemos sentir como humanos.</h1>
+      <p class="hero-sub" id="hero-sub">Enmi es un espacio cercano para parar, mirar hacia dentro y escuchar lo que sientes. Sin cuentas, sin complicaciones — solo tú y un mapa para conocerte mejor.</p>
       <div class="hero-ctas">
         <a class="btn-primary" id="hero-cta" href="app/">Empezar ahora →</a>
         <span class="hero-note" id="hero-note">Gratis · Se abre en tu navegador, sin descargas</span>
@@ -574,7 +584,13 @@
   </div>
 
   <section class="origin">
-    <p class="origin-body" id="origin-body">Enmi nació de una necesidad. Hubo un momento en el que necesité entender qué me pasaba por dentro — no por curiosidad, sino porque de verdad lo necesitaba. Con el tiempo descubrí que ponerle nombre a las emociones cambiaba la forma de vivirlas.</p>
+    <p class="origin-quote" id="origin-quote">La tecnología avanza. Pero hay algo que nadie puede vivir por nosotros: lo que sentimos.</p>
+    <p class="origin-body" id="origin-body">La inteligencia artificial aprende, responde, crea, y cada día comprende un poco más. Mientras tanto, vamos tan deprisa que dejamos de escucharnos. Sentimos algo y no sabemos qué es. Nos acostumbramos a ignorarlo, a esconderlo o a seguir adelante sin más.</p>
+    <p class="origin-body origin-lines" id="origin-body2">Enmi nace para hacer lo contrario: parar, mirar hacia dentro y descubrir qué está pasando en ti.
+No para decirte cómo deberías sentirte.
+No para juzgarte.
+Solo para ayudarte a escucharte.</p>
+    <p class="origin-close" id="origin-close">Porque quizá sentir sea lo que más humanos nos hace.</p>
     <div class="origin-mark"></div>
   </section>
 
@@ -666,7 +682,7 @@
     <span class="footer-brand">Enmi</span>
     <div class="footer-links">
       <a href="app/" id="footer-open">Abrir la app</a>
-      <a href="mailto:ddazosgame@gmail.com" id="footer-contact">Contacto</a>
+      <a href="mailto:ddazosgames@gmail.com" id="footer-contact">Contacto</a>
     </div>
     <p class="footer-copy" id="footer-copy">© 2026 Enmi. Enmi es una herramienta de acompañamiento emocional y no sustituye la atención de profesionales de la salud mental.</p>
   </div>
@@ -676,12 +692,15 @@
 const UI_STRINGS = {
   es: {
     navCta: 'Empezar',
-    heroEyebrow: 'Bienestar emocional · en español',
-    heroH1: 'Comprender tus emociones puede cambiar la forma en la que ves el mundo.',
-    heroSub: 'Enmi es un espacio cálido para pararte un momento, escucharte y entender lo que sientes. Sin cuentas, sin complicaciones — solo tú y un mapa para conocerte mejor.',
+    heroEyebrow: 'Un espacio para escucharte',
+    heroH1: 'En un mundo que piensa cada vez más como una máquina, no olvidemos sentir como humanos.',
+    heroSub: 'Enmi es un espacio cercano para parar, mirar hacia dentro y escuchar lo que sientes. Sin cuentas, sin complicaciones — solo tú y un mapa para conocerte mejor.',
     heroCta: 'Empezar ahora →',
     heroNote: 'Gratis · Se abre en tu navegador, sin descargas',
-    originBody: 'Enmi nació de una necesidad. Hubo un momento en el que necesité entender qué me pasaba por dentro — no por curiosidad, sino porque de verdad lo necesitaba. Con el tiempo descubrí que ponerle nombre a las emociones cambiaba la forma de vivirlas.',
+    originBody: 'La inteligencia artificial aprende, responde, crea, y cada día comprende un poco más. Mientras tanto, vamos tan deprisa que dejamos de escucharnos. Sentimos algo y no sabemos qué es. Nos acostumbramos a ignorarlo, a esconderlo o a seguir adelante sin más.',
+    originQuote: 'La tecnología avanza. Pero hay algo que nadie puede vivir por nosotros: lo que sentimos.',
+    originBody2: 'Enmi nace para hacer lo contrario: parar, mirar hacia dentro y descubrir qué está pasando en ti.\nNo para decirte cómo deberías sentirte.\nNo para juzgarte.\nSolo para ayudarte a escucharte.',
+    originClose: 'Porque quizá sentir sea lo que más humanos nos hace.',
     featuresEyebrow: 'Qué encontrarás dentro',
     featuresTitle: 'Un mapa, no un diagnóstico',
     mapTitle: 'Un mapa para entender lo que sientes',
@@ -717,12 +736,15 @@ const UI_STRINGS = {
   },
   en: {
     navCta: 'Start',
-    heroEyebrow: 'Emotional wellness',
-    heroH1: 'Understanding your emotions can change the way you see the world.',
-    heroSub: 'Enmi is a warm space to pause for a moment, listen to yourself, and understand what you\'re feeling. No accounts, no complications — just you and a map to get to know yourself better.',
+    heroEyebrow: 'A space to listen to yourself',
+    heroH1: 'In a world that thinks more and more like a machine, let\'s not forget to feel like humans.',
+    heroSub: 'Enmi is a gentle space to pause, look inward, and listen to what you feel. No accounts, no complications — just you and a map to get to know yourself better.',
     heroCta: 'Get started →',
     heroNote: 'Free · Opens in your browser, no downloads',
-    originBody: 'Enmi was born from a need. There was a moment when I needed to understand what was happening inside me — not out of curiosity, but because I truly needed it. Over time I discovered that naming emotions changed the way I experienced them.',
+    originBody: 'Artificial intelligence learns, answers, creates, and understands a little more every day. Meanwhile, we move so fast we stop listening to ourselves. We feel something and don\'t know what it is. We get used to ignoring it, hiding it, or just carrying on.',
+    originQuote: 'Technology keeps moving forward. But there\'s something no one can live for us: what we feel.',
+    originBody2: 'Enmi was born to do the opposite: to pause, look inward, and discover what\'s happening inside you.\nNot to tell you how you should feel.\nNot to judge you.\nJust to help you listen to yourself.',
+    originClose: 'Because maybe feeling is what makes us most human.',
     featuresEyebrow: 'What you\'ll find inside',
     featuresTitle: 'A map, not a diagnosis',
     mapTitle: 'A map to understand what you feel',
@@ -763,7 +785,7 @@ function t(key){ return UI_STRINGS[currentLang][key]; }
 
 const idMap = {
   navCta: 'nav-cta', heroEyebrow: 'hero-eyebrow', heroH1: 'hero-h1', heroSub: 'hero-sub',
-  heroCta: 'hero-cta', heroNote: 'hero-note', originBody: 'origin-body',
+  heroCta: 'hero-cta', heroNote: 'hero-note', originBody: 'origin-body', originQuote: 'origin-quote', originBody2: 'origin-body2', originClose: 'origin-close',
   featuresEyebrow: 'features-eyebrow', featuresTitle: 'features-title', mapTitle: 'map-title', mapBody: 'map-body',
   feat1Title: 'feat1-title', feat1Body: 'feat1-body',
   feat2Title: 'feat2-title', feat2Body: 'feat2-body',

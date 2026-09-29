@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Política de privacidad — Enmi</title>
+<meta name="description" content="Cómo trata Enmi tus datos: qué se guarda en tu dispositivo, qué no sale de él, anuncios, cookies y cómo contactarnos.">
+<meta name="theme-color" content="#F0A875">
+<link rel="icon" type="image/png" sizes="32x32" href="app/icons/favicon-32.png">
+<link rel="apple-touch-icon" href="app/icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@1,9..144,500&family=Karla:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --peach-top:#FCE0C9; --cream:#FBF8F2; --ink:#3B342A; --ink-soft:#6E6357;
+    --amber:#D68A4C; --line:#E4DACB;
+  }
+  *{ box-sizing:border-box; }
+  body{
+    margin:0; font-family:'Karla', sans-serif; color:var(--ink);
+    background:linear-gradient(180deg, var(--peach-top) 0, var(--cream) 320px);
+    -webkit-font-smoothing:antialiased;
+  }
+  .nav{
+    max-width:760px; margin:0 auto; padding:24px 20px;
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+  }
+  .brand{ font-family:'Fraunces', serif; font-style:italic; font-weight:500; font-size:22px; color:var(--ink); text-decoration:none; }
+  .lang{ display:flex; background:rgba(255,255,255,0.6); border:1px solid rgba(255,255,255,0.8); border-radius:100px; padding:3px; }
+  .lang button{ border:none; background:none; padding:6px 12px; border-radius:100px; font:700 12.5px 'Karla', sans-serif; color:var(--ink-soft); cursor:pointer; }
+  .lang button.active{ background:var(--ink); color:var(--cream); }
+  main{ max-width:760px; margin:0 auto; padding:10px 20px 70px; }
+  h1{ font-family:'Fraunces', serif; font-style:italic; font-weight:500; font-size:clamp(30px, 5vw, 40px); line-height:1.2; margin:10px 0 8px; }
+  .updated{ color:var(--ink-soft); font-size:14px; margin:0 0 30px; }
+  h2{ font-size:17px; font-weight:700; margin:34px 0 10px; }
+  p, li{ font-size:16px; line-height:1.7; color:var(--ink-soft); }
+  p{ margin:0 0 12px; }
+  ul{ margin:0 0 12px; padding-left:22px; }
+  a{ color:var(--amber); }
+  .card{ background:rgba(255,255,255,0.65); border:1px solid var(--line); border-radius:18px; padding:20px 22px; margin-top:6px; }
+  .card p:last-child{ margin-bottom:0; }
+  footer{ border-top:1px solid var(--line); max-width:760px; margin:0 auto; padding:24px 20px 40px; font-size:13.5px; color:var(--ink-soft); display:flex; gap:20px; flex-wrap:wrap; }
+  footer a{ color:var(--ink-soft); font-weight:600; text-decoration:none; }
+  [data-lang]{ display:none; }
+  html[lang="es"] [data-lang="es"], html[lang="en"] [data-lang="en"]{ display:block; }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a class="brand" href="./">Enmi</a>
+  <div class="lang">
+    <button id="btn-es" class="active" onclick="setLang('es')">ES</button>
+    <button id="btn-en" onclick="setLang('en')">EN</button>
+  </div>
+</nav>
+
+<main>
+  <!-- ================= ESPAÑOL ================= -->
+  <div data-lang="es">
+    <h1>Política de privacidad</h1>
+    <p class="updated">Última actualización: 29 de septiembre de 2026</p>
+
+    <div class="card">
+      <p><strong>En pocas palabras:</strong> lo que escribes y seleccionas en Enmi se queda en tu dispositivo. No pedimos registro, no te pedimos tu nombre ni tu correo, y no vendemos datos a nadie.</p>
+    </div>
+
+    <h2>Quién es el responsable</h2>
+    <p>Enmi es un proyecto independiente de DdazosGames. Para cualquier duda sobre privacidad puedes escribir a <a href="mailto:hola@enmi.app">hola@enmi.app</a>.</p>
+
+    <h2>Lo que se guarda solo en tu dispositivo</h2>
+    <p>Las emociones que eliges, tus notas, tus favoritos, el historial y las respuestas del semáforo se guardan en el almacenamiento local de tu navegador. No se envían a ningún servidor y nadie más que tú puede verlos. También guardamos ahí tus preferencias, como el idioma.</p>
+    <p>Puedes borrarlo todo en cualquier momento desde <em>Ajustes → Borrar mis datos</em> dentro de la app, o borrando los datos del sitio en tu navegador.</p>
+
+    <h2>Recordatorios (solo si los activas)</h2>
+    <p>Si activas las notificaciones, guardamos en nuestro servidor (Google Firebase) lo imprescindible para enviártelas: un identificador técnico de notificaciones de tu dispositivo y la hora que has elegido. No incluye nada de lo que escribes en la app. Si desactivas los recordatorios, dejamos de enviarlos.</p>
+
+    <h2>Contenido de la app</h2>
+    <p>Los textos de la biblioteca de emociones se descargan desde nuestro servidor (Google Firebase) para que la app pueda mostrarlos. Esta descarga no envía ninguna información tuya.</p>
+
+    <h2>Anuncios y cookies</h2>
+    <p>Para mantener Enmi gratuita mostramos anuncios de Google AdSense. Google y sus socios pueden usar cookies para mostrar anuncios, incluidos anuncios basados en visitas anteriores a este u otros sitios. La primera vez que entras te mostramos un aviso para que elijas si aceptas anuncios personalizados; puedes cambiar tu elección cuando quieras.</p>
+    <p>Puedes saber más o desactivar los anuncios personalizados en <a href="https://adssettings.google.com" target="_blank" rel="noopener">la configuración de anuncios de Google</a> y consultar <a href="https://policies.google.com/technologies/ads" target="_blank" rel="noopener">cómo usa Google las cookies publicitarias</a>.</p>
+
+    <h2>Estadísticas de visitas</h2>
+    <p>Usamos Cloudflare Web Analytics para saber cuántas personas visitan la web. No usa cookies ni te identifica: solo recoge datos agregados, como el número de visitas o el tipo de dispositivo.</p>
+
+    <h2>Donaciones</h2>
+    <p>Si decides colaborar con Enmi, el pago se hace en Ko-fi, fuera de nuestra web. Ko-fi y su procesador de pagos tratan esos datos según su propia política de privacidad; nosotros no vemos los datos de tu tarjeta.</p>
+
+    <h2>Tus derechos</h2>
+    <p>Como no te pedimos datos personales, casi todo lo que hay de ti está en tu propio dispositivo y lo controlas tú. Si tienes cualquier pregunta, o quieres que eliminemos el identificador de notificaciones asociado a tu dispositivo, escríbenos a <a href="mailto:hola@enmi.app">hola@enmi.app</a>.</p>
+
+    <h2>Aviso importante</h2>
+    <p>Enmi es una herramienta de acompañamiento emocional y no sustituye la atención de profesionales de la salud mental.</p>
+
+    <h2>Cambios en esta política</h2>
+    <p>Si cambiamos algo importante, por ejemplo si añadimos copia de seguridad en la nube, lo actualizaremos aquí y te lo explicaremos dentro de la app.</p>
+  </div>
+
+  <!-- ================= ENGLISH ================= -->
+  <div data-lang="en">
+    <h1>Privacy policy</h1>
+    <p class="updated">Last updated: September 29, 2026</p>
+
+    <div class="card">
+      <p><strong>In short:</strong> what you write and select in Enmi stays on your device. There's no sign-up, we don't ask for your name or email, and we don't sell data to anyone.</p>
+    </div>
+
+    <h2>Who is responsible</h2>
+    <p>Enmi is an independent project by DdazosGames. For any privacy question you can write to <a href="mailto:hola@enmi.app">hola@enmi.app</a>.</p>
+
+    <h2>What is stored only on your device</h2>
+    <p>The emotions you choose, your notes, favorites, history and traffic-light answers are stored in your browser's local storage. They are never sent to any server and no one but you can see them. Your preferences, such as language, are stored there too.</p>
+    <p>You can delete everything at any time from <em>Settings → Delete my data</em> inside the app, or by clearing this site's data in your browser.</p>
+
+    <h2>Reminders (only if you turn them on)</h2>
+    <p>If you enable notifications, we store on our server (Google Firebase) only what is needed to send them: a technical notification identifier for your device and the time you chose. It includes nothing you write in the app. If you turn reminders off, we stop sending them.</p>
+
+    <h2>App content</h2>
+    <p>The texts of the emotion library are downloaded from our server (Google Firebase) so the app can show them. This download sends no information about you.</p>
+
+    <h2>Ads and cookies</h2>
+    <p>To keep Enmi free we show Google AdSense ads. Google and its partners may use cookies to serve ads, including ads based on previous visits to this or other websites. The first time you visit, we show a notice so you can choose whether to accept personalized ads; you can change your choice at any time.</p>
+    <p>You can learn more or turn off personalized ads in <a href="https://adssettings.google.com" target="_blank" rel="noopener">Google's ad settings</a>, and read <a href="https://policies.google.com/technologies/ads" target="_blank" rel="noopener">how Google uses advertising cookies</a>.</p>
+
+    <h2>Visit statistics</h2>
+    <p>We use Cloudflare Web Analytics to know how many people visit the site. It uses no cookies and doesn't identify you: it only collects aggregated data, such as the number of visits or device type.</p>
+
+    <h2>Donations</h2>
+    <p>If you choose to support Enmi, payment happens on Ko-fi, outside our site. Ko-fi and its payment processor handle that data under their own privacy policy; we never see your card details.</p>
+
+    <h2>Your rights</h2>
+    <p>Since we don't ask for personal data, almost everything about you lives on your own device and you control it. If you have any question, or want us to delete the notification identifier linked to your device, write to <a href="mailto:hola@enmi.app">hola@enmi.app</a>.</p>
+
+    <h2>Important notice</h2>
+    <p>Enmi is an emotional support tool and does not replace the care of mental health professionals.</p>
+
+    <h2>Changes to this policy</h2>
+    <p>If we change anything important, for example adding cloud backup, we'll update it here and explain it inside the app.</p>
+  </div>
+</main>
+
+<footer>
+  <a href="./">Enmi</a>
+  <a href="app/">App</a>
+  <a href="mailto:hola@enmi.app">hola@enmi.app</a>
+</footer>
+
+<script>
+function setLang(l){
+  document.documentElement.lang = l;
+  document.getElementById('btn-es').classList.toggle('active', l === 'es');
+  document.getElementById('btn-en').classList.toggle('active', l === 'en');
+  try{ localStorage.setItem('enmi_privacy_lang', l); }catch(e){}
+}
+try{
+  const saved = localStorage.getItem('enmi_privacy_lang');
+  const guess = saved || ((navigator.language || 'es').startsWith('es') ? 'es' : 'en');
+  setLang(guess);
+}catch(e){ setLang('es'); }
+</script>
+<script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "4c8d12705c83435387049f8aed0934bc"}'></script>
+</body>
+</html>
